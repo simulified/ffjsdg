@@ -17,7 +17,7 @@
         @foreach($items as $item)
         <div class="col-6 col-sm-4 col-md-2 p-2">
             <div class="card mb-2 border-0 text-center" style="width: 100%; height: 175px">
-                <img class="card-img-top" style="object-fit: contain;" src="{{ asset('images/thumbnail/blank.png') }}" data-tadah-thumbnail-type="item-thumbnail" data-tadah-thumbnail-id="{{ $item->id }}" width="100" height="100" alt="{{$item->name}} thumbnail">
+                <img class="card-img-top" style="object-fit: contain;" src="https://cdn.kapish.fun/{{$item->id}}" data-tadah-thumbnail-type="item-thumbnail" data-tadah-thumbnail-id="{{ $item->id }}" width="100" height="100" alt="{{$item->name}} thumbnail">
                 <div class="card-body p-1" style="display: block;">
                     <div class="text-truncate"><a href="/item/{{$item->id}}">{{$item->name}}</a></div>
                     <a id="item-wear" onclick="wear({{$item->id}})" <button type="submit" style="width: 100%" class="btn btn-sm btn-{{ ($item->wearing) ? "danger" : "primary" }} shadow-sm">{{ ($item->unequippable) ? "nope" : (($item->wearing) ? "Remove" : "Equip") }}</a>                    
