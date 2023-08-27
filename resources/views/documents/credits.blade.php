@@ -30,7 +30,7 @@
             <h1>Kapish Developers</h1>
             <ul>
                 <li><b>Stan</b> - Project Lead</li>
-                <li><b>Calones</b> - Server manager and person who made client arbiter</li>
+                <li><b>Cirro</b> - Server manager and person who made client arbiter</li>
             </ul>
 
             <p>Without these people lending their help, {{ config('app.name') }} would not be as good as it is today. Thanks everyone.</p>
