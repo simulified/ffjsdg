@@ -64,9 +64,6 @@ public function file(Request $request, $file)
     {
         return abort(404);
     }
-    if (!is_numeric($file)) {
-	return abort(403);
-    } 
     $user = false;
     if ($request->has("type")) {
 	if ($request->query('type') == "bodyshot") {
