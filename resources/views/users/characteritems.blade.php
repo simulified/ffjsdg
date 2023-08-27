@@ -44,7 +44,7 @@
                                 @foreach ($items->all() as $item)
                                     <div class="col-12 col-sm-4 col-md-2 p-2">
                                         <div class="card mb-2 border-0 text-center" style="width: 100%; height: 175px">
-                                            <img class="card-img-top" style="object-fit: contain;" src="{{ route('item.thumbnail', $item->id) }}" width="100" height="100" alt="{{ $item->name }} thumbnail">
+                                            <img class="card-img-top" style="object-fit: contain;" src="https://cdn.kapish.fun/{{$item->id}}" width="100" height="100" alt="{{ $item->name }} thumbnail">
                                             <div class="card-body p-1" style="display: block;">
                                                 <div class="text-truncate"><a href="{{ route('item.view', $item->id) }}">{{ $item->name }}</a></div>
                                                 <form method="POST" action="{{ url('/character/toggle/' . $item->id) }}">
