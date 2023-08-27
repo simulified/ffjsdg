@@ -19,7 +19,7 @@ tadah.url = (endpoint) => {
 
 $(document).ready(() => {
     console.error("## HELLO THERE! READ THIS! ##\nIf you paste anything here, people can steal your Tadah account. Therefore, if you paste anything here and don't know what you're doing, you realize that you can get your account HACKED.\nDon't be an idiot and please play safe.")
-    
+
     if ($("[data-toggle='tooltip']").length) $("[data-toggle='tooltip']").tooltip()
 
     setInterval(function() {
@@ -34,14 +34,14 @@ $(document).ready(() => {
         // stipend timer
         tadah.session.stipend = {
             started: $("#reward").attr("data-tadah-started"),
-            seconds: (Math.floor(Date.now() / 1000) - $("#reward").attr("data-tadah-started")) + 1
+            seconds: (24 * 60 * 60) - (Math.floor(Date.now() / 1000) - $("#reward").attr("data-tadah-started")) + 1
         }
-        
+
         tadah.session.stipend.update = () => {
             tadah.session.stipend.seconds -= 1
 
             if (tadah.session.stipend.seconds <= 0) {
-                tadah.session.stipend.seconds -= 1
+                tadah.session.stipend.seconds = (24 * 60 * 60) - 1
             }
 
             $("#reward").attr("data-original-title", `${humanize(tadah.session.stipend.seconds)} until your next reward`)
@@ -53,6 +53,7 @@ $(document).ready(() => {
 
     tadah.loadThumbnails()
 })
+
 
 tadah.loadThumbnails = () => {    
     $("[data-tadah-thumbnail-type]").each(async function () {
