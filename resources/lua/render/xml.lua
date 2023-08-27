@@ -8,16 +8,21 @@ game:GetService("InsertService"):SetAssetVersionUrl(baseUrl .. "/Asset/?assetver
 game:GetService("ContentProvider"):SetBaseUrl(baseUrl)
 game:GetService("ScriptContext").ScriptsDisabled = true
 
-local asset = game:GetObjects(("%s/asset?id=%d"):format(baseUrl, assetId))[1]
-asset.Parent = workspace
+local hideSky = true
 
-local thumbnailCamera = asset:FindFirstChild("ThumbnailCamera")
-if thumbnailCamera ~= nil and thumbnailCamera.ClassName == "Camera" then
-    workspace.CurrentCamera = ModelCamera
+for i,v in next, game:GetObjects("rbxassetid://" .. assetId) do
+	if v:IsA'Sky' then
+		v.Parent = game:GetService("Lighting")
+		hideSky = false
+	else
+		pcall(function() v.Parent = workspace end)
+	end
 end
 
+pcall(function() workspace.Camera:Remove() end) -- thumbnailcamera hack
+
 print(("[%s] Rendering ..."):format(jobId))
-local result = game:GetService("ThumbnailGenerator"):Click(format, x, y, true)
+local result = game:GetService("ThumbnailGenerator"):Click(format, x, y, hideSky, true)
 print(("[%s] Done!"):format(jobId))
 
 return result
