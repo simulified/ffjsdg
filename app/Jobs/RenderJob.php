@@ -135,7 +135,7 @@ class RenderJob implements ShouldQueue, ShouldBeUnique
         $arguments;
         $script;
         $result;
-
+        $arbiterkey = env('RCC_KEY');
         // Run first PNG thumbnail job:
         $job_id = (string) Str::uuid();
         $arguments = [$job_id, $this->assetType, 'PNG', $x * 2, $y * 2, $base_url, $this->assetId];
@@ -146,11 +146,10 @@ class RenderJob implements ShouldQueue, ShouldBeUnique
         if ($this->assetType == 'user')
         {
             $job_id = (string) Str::uuid();
-
             try
             {
-                $headshot = file_get_contents('http://127.0.0.1:64989/render/headshot/'.$this->assetId.'');
-		$bodyshot = file_get_contents('http://127.0.0.1:64989/render/bodyshot/'.$this->assetId.'');
+                $headshot = file_get_contents('http://127.0.0.1:64989/render/user/'.$this->assetId.'/headshot?key='.$arbiterkey);
+		$bodyshot = file_get_contents('http://127.0.0.1:64989/render/user/'.$this->assetId.'/bodyshot?key='.$arbiterkey);
                 $image = new SimpleImage();
                 $image = $image
                     ->fromString($this->decode($headshot))
@@ -177,7 +176,7 @@ class RenderJob implements ShouldQueue, ShouldBeUnique
         {
 	    $type = "";
             if ($this->assetJob['folder'] == "users") { return; }
-            $result = file_get_contents('http://127.0.0.1:64989/render/asset/'.$this->assetId.'?key=arbiterkey');
+            $result = file_get_contents('http://127.0.0.1:64989/render/asset/'.$this->assetId.'?key='.$arbiterkey);
             $asset = $result;
             $image = new SimpleImage();
             $image = $image
@@ -198,7 +197,7 @@ class RenderJob implements ShouldQueue, ShouldBeUnique
 
         // NOT ALWAYS!
         // Run optional third job for 3D:
-        if (false)
+        if ($this->assetJob['3d'])
         {
             $job_id = (string) Str::uuid();
             $arguments = [$job_id, $this->assetType, 'OBJ', $x, $y, $base_url, $this->assetId];
@@ -210,10 +209,10 @@ class RenderJob implements ShouldQueue, ShouldBeUnique
             try
             {
                 if ($this->assetType == 'user' || $this->assetJob['folder'] == 'users') {
-                    $result = file_get_contents('http://arbiter/render/user/'.$this->assetId.'/3d?key=arbiterkey');
+                    $result = file_get_contents('http://127.0.0.1:64989/render/user/'.$this->assetId.'/3d?key='.$arbiterkey);
                 }
                 else {
-                    $result = file_get_contents('http://arbiter/render/asset/'.$this->assetId.'/3d?key=arbiterkey');
+                    $result = file_get_contents('http://127.0.0.1:64989/render/asset/'.$this->assetId.'/3d?key='.$arbiterkey);
                 }
                 $result = json_decode($result);
 
