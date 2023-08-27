@@ -77,7 +77,7 @@ public function file(Request $request, $file)
     } else {     $filePath = storage_path('app/renders/items/' . $file . '.png'); }
     $item = Item::find($file);
     if (File::exists(storage_path("cdn/". $file))) {
-    $cdnHash = File::get($storage_path("cdn/". $file));
+    $cdnHash = File::get(storage_path("cdn/". $file));
     return response($cdnHash)
     ->header('Content-Type', 'image/png')
     ->header('Content-Encoding', 'gzip')
