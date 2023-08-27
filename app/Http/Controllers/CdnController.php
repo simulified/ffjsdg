@@ -77,11 +77,12 @@ public function file(Request $request, $file)
     } else {     $filePath = storage_path('app/renders/items/' . $file . '.png'); }
     $item = Item::find($file);
     if (File::exists(storage_path("cdn/". $file))) {
-    $cdnHash = File::get(storage_path("cdn/". $file));
-    return response($cdnHash)
-    ->header('Content-Type', 'image/png')
-    ->header('Content-Encoding', 'gzip')
-    ->header('Access-Control-Allow-Origin', '*');
+        $headers = explode(';', Storage::disk('cdn')->get($file . '.mime'));
+
+        return response(Storage::disk('cdn')->get($file))
+            ->header('Content-Type', 'application/octet-stream')
+            ->header('Content-Encoding', 'gzip')
+            ->header('Access-Control-Allow-Origin', '*');
     }
 
     if ($item && $item->thumbnail_url != NULL) {
