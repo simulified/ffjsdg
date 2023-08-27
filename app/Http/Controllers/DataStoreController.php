@@ -17,6 +17,7 @@ class DataStoreController extends Controller
 
     function getAsync(Request $request)
     {
+        abort(403);
         // GetAsync
         // POST DATA:
         // &qkeys[0].scope=global&qkeys[0].target=KEY&qkeys[0].key=DATASTORE
@@ -87,6 +88,7 @@ class DataStoreController extends Controller
 
     function setAsync(Request $request)
     {
+        abort(403);
         // SetAsync
         // POST DATA:
         // value=%22KEYVALUE%22

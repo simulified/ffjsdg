@@ -25,7 +25,7 @@ return [
     */
 
     // Site settings
-    'server_creation_enabled' => true,
+    'server_creation_enabled' => false,
 
     'item_creation_enabled' => true,
     'asset_upload_cost' => 1,
@@ -39,9 +39,9 @@ return [
 
     'mailing_address' => env('MAIL_FROM_ADDRESS', ''),
 
-    'die_mauer' => false,
+    'die_mauer' => true,
 
-    'max_accounts_per_ip' => 1,
+    'max_accounts_per_ip' => 3,
     'use_captcha' => (bool) env('USE_CAPTCHA', true),
 
     'character_regeneration' => (bool) env('ENABLE_CHARACTER_REGENERATION', true),
@@ -62,10 +62,10 @@ return [
     ],
 
     // Registration settings
-    'users_create_invite_keys' => false, // (bool) env('USERS_CREATE_INVITE_KEYS', true),
-    'user_invite_key_cost' => 500,
-    'user_maximum_keys_in_window' => 1, // for ex. 3 keys every x days
-    'user_invite_key_cooldown' => 7, // in days
+    'users_create_invite_keys' => true, // (bool) env('USERS_CREATE_INVITE_KEYS', true),
+    'user_invite_key_cost' => 160,
+    'user_maximum_keys_in_window' => 2, // for ex. 3 keys every x days
+    'user_invite_key_cooldown' => 15, // in days
 
     'invite_keys_required' => true,
     'registration_enabled' => true,
@@ -233,8 +233,6 @@ return [
         /*
          * Package Service Providers...
          */
-        Scyllaly\HCaptcha\HCaptchaServiceProvider::class,
-
         /*
          * Application Service Providers...
          */
@@ -296,8 +294,7 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'HCaptcha' => Scyllaly\HCaptcha\Facades\HCaptcha::class,
-
+        'ReCaptcha' => ReCaptcha\ReCaptcha::class,
     ],
 
 ];

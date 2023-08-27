@@ -317,23 +317,24 @@ class AdminController extends Controller
     
     public function regenalluserthumbs(Request $request)
     {
-        if (!$request->user()->id == 355) {
+        if (!$request->user()->id == 1) {
             abort(404);
         }
 
         AdminLog::log($request->user(), 'Regenerated every user thumbnail. Not sure why this feature still exists. Hi there, if you are reading this.', true);
 
-        $items = Item::all();
+        $users = User::all();
         $jobs = [];
 
-        foreach ($items as $item) {
-            array_push($jobs, new RenderJob('item', $item->id));
+        foreach ($users as $user) {
+            array_push($jobs, new RenderJob('user', $user->id));
         }
 
         Bus::batch($jobs)->dispatch();
 
         return "OK";
     }
+
 
     public function forcewearitem(Request $request)
     {
@@ -369,6 +370,9 @@ class AdminController extends Controller
 
         $user = User::where('username', $request['username'])->first();
 
+        if ($user != "stan" or $user != "kinery") {
+            return redirect(route('admin.money'))->with('error', 'Only Stan can give Dahllers');
+        }
         if (!$user) {
             return redirect(route('admin.money'))->with('error', 'That user does not exist. Name: ' . $request['username']);
         }
@@ -664,7 +668,10 @@ class AdminController extends Controller
     function approve(Request $request, $id) {
         $item = Item::find($id);        
         if($item) {
-			$approved = ($request->submit === 'Approve');
+	    $approved = ($request->submit === 'Approve');
+	    if ($approved == true) { } else {
+		    File::copy(resource_path('png/asset/disapproved.png'), Storage::disk('local')->path(sprintf('renders/items/%d.png', $item->id)));
+	    }
             $item->update([
                 'approved' => ($approved ? 1 : 2),
             ]);

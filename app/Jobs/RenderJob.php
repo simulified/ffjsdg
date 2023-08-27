@@ -149,8 +149,8 @@ class RenderJob implements ShouldQueue, ShouldBeUnique
 
             try
             {
-                $headshot = file_get_contents('http://arbiter/render/user/'.$this->assetId.'/headshot?key=arbiterkey');
-		$bodyshot = file_get_contents('http://arbiter/render/user/'.$this->assetId.'/bodyshot?key=arbiterkey');
+                $headshot = file_get_contents('http://127.0.0.1:64989/render/headshot/'.$this->assetId.'');
+		$bodyshot = file_get_contents('http://127.0.0.1:64989/render/bodyshot/'.$this->assetId.'');
                 $image = new SimpleImage();
                 $image = $image
                     ->fromString($this->decode($headshot))
@@ -177,7 +177,7 @@ class RenderJob implements ShouldQueue, ShouldBeUnique
         {
 	    $type = "";
             if ($this->assetJob['folder'] == "users") { return; }
-            $result = file_get_contents('http://arbiter/render/asset/'.$this->assetId.'?key=arbiterkey');
+            $result = file_get_contents('http://127.0.0.1:64989/render/asset/'.$this->assetId.'?key=arbiterkey');
             $asset = $result;
             $image = new SimpleImage();
             $image = $image
@@ -198,7 +198,7 @@ class RenderJob implements ShouldQueue, ShouldBeUnique
 
         // NOT ALWAYS!
         // Run optional third job for 3D:
-        if ($this->assetJob['3d'])
+        if (false)
         {
             $job_id = (string) Str::uuid();
             $arguments = [$job_id, $this->assetType, 'OBJ', $x, $y, $base_url, $this->assetId];

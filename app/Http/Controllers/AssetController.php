@@ -38,6 +38,15 @@ class AssetController extends Controller
             $response->header('Content-Type', 'application/octet-stream');
             return $response;
         }
+        if ($request->xmlon) {
+            if (Storage::disk('public')->exists('items/' . $request->id)) {
+                $response = Response::make(Storage::disk('public')->get('items/' . $request->id), 200);
+                $response->header('Content-Type', 'application/octet-stream');
+                return view('client.xmlasset')->with('item', $item);
+            } else {
+                return abort(404);
+            }
+        }
         if (!$item) {
             return redirect('https://assetdelivery.roblox.com/v1/asset?id=' . $request->id);
 

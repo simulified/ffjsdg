@@ -53,6 +53,11 @@
                                         <div class="text-truncate">
                                             {{ $item->name }}
                                         </div>
+					@if ($item->type == "Image") 
+						<p>NSFW: {{$item->detectable ? 'yes' : 'no'}}</p>
+					@else
+					
+					@endif
 										@if ($item->type == 'Audio')
 											<img src="{{ asset('images/thumbnail/audio.png') }}" alt="{{ $item->name }} {{ __('thumbnail') }}" class="card-img-top p-2" style="border-radius: .75rem; max-height: 256px;">
 										@else
@@ -60,6 +65,7 @@
                                         @endif
 										
 										@if($item->type == 'Shirt' || $item->type == 'Pants')
+						<p>NSFW: {{$item->detectable ? 'yes' : 'no'}}</p>
                                             <div class="position-absolute" style="left: 0; bottom: 0">
                                                 <a class="text-decoration-none" target="_blank" href="{{route('item.template', $item->id)}}">View template</a>
                                             </div>

@@ -287,36 +287,38 @@ class User extends Authenticatable
         $item->user->save();
 	}
 	
-	public function buyItem($item)
-	{
-		// Check if the user can purchase the item
-		if(!$this->canPurchaseItem($item))
-			return back()->with('error', 'You can not afford this item.'); // Ratelimit got the user ();
+public function buyItem($item)
+{
+    // Check if the user can purchase the item
+    if (!$this->canPurchaseItem($item)) {
+        return back()->with('error', 'You cannot afford this item.'); // Ratelimit got the user ();
+    }
 
-		$resale = Reseller::find($item->id);
-		if($item->isLimited() || $item->isLimitedUnique()) {
-			if ($this->ownsItem($item->id) && $this->getLimitedFromInventory($item->id)->count+1 == 3) {
-				return false;
-			}
-			if ($item->isLimited() && $item->isResellable() && !is_null($resale)) {
-				return abort(403);
-			} 
-		}
-		// Add the item to the user's inventory
-		$this->addToInventory($item);
-		
-		// Incur the fees and returns
-        $this->incurFees($item);
-		
-		// Log the sale
-		Sale::create([
-			"purchaser_id"   => $this->id,
-			"seller_id"      => $item->creator,
-			"product_id"     => $item->id,
-			"purchase_price" => $item->price,
-			"total_price"    => $item->price
-		]);
-	}
+    $resale = Reseller::find($item->id);
+    if ($item->isLimited() || $item->isLimitedUnique()) {
+        if ($this->ownsItem($item->id) && $this->getLimitedFromInventory($item->id)->count() + 1 == 3) {
+            return false;
+        }
+        if ($item->isLimited() && $item->isResellable() && !is_null($resale)) {
+            return abort(403);
+        }
+    }
+    // Add the item to the user's inventory
+    $this->addToInventory($item);
+
+    // Incur the fees and returns
+    $this->incurFees($item);
+
+    // Log the sale
+    Sale::create([
+        "purchaser_id"   => $this->id,
+        "seller_id"      => $item->creator,
+        "product_id"     => $item->id,
+        "purchase_price" => $item->price,
+        "total_price"    => $item->price
+    ]);
+}
+
 	
 	public function buyResale($resale)
 	{

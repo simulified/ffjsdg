@@ -92,11 +92,11 @@ class Thumbnail
         {
             if (!empty($asset->thumbnail_url))
             {
-                $overrideUrl = $asset->thumbnail_url;
+                $overrideUrl = "https://cdn.kapish.fun/".$id;
             }
             elseif ($asset->type == 'T-Shirt')
             {
-                $overrideUrl = CdnManager::resolve(Storage::disk('local')->path(sprintf('renders/items/%d.png', $id))); // shit
+                $overrideUrl = "https://cdn.kapish.fun/".$id;
             }
 
             if ($asset->type == 'T-Shirt' || $asset->type == 'Model')
@@ -105,16 +105,12 @@ class Thumbnail
             }
         }
         
-        if (!Storage::disk('local')->exists(sprintf('renders/%ss/%d.png', $type, $id)) && $overrideUrl !== null)
-        {
-            return [ 'status' => 1 ];
-        }
         
         if ($type == 'place')
         {
             $threeDee = false;
         }
-        
+         $overrideUrl = "https://cdn.kapish.fun/".$id;
         $response['result'] = Render::resolve($type, $id, $threeDee, $overrideUrl);
         return $response;
     }

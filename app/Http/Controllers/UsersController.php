@@ -13,6 +13,7 @@ use App\Models\OwnedItems;
 use App\Models\BodyColors;
 use App\Models\RenderQueue;
 use App\Models\Ban;
+use App\Models\Sale;
 use App\Models\Friendship;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -761,7 +762,138 @@ class UsersController extends Controller
 
         return view('my.keys')->with(['inviteKeys' => $inviteKeys]);
     }
+    public function coinflipfrontend(Request $request) {
+        return view('coin.flip');
+    }
+    public function coinflip(Request $request) {
+        $rand = mt_rand(0, 1);
+        $user = $request->user();
+        if (!$request->has('flip')) {
+            abort(400);
+        }
+        if ($request->has("moneyGambled")) {
+            $money = (int)$request->get("moneyGambled");
+            $money = floor($money);
+	    if ($user->money == null) {
+		return "you're not signed in";
+	    }
+            if ($user->money < $money or $money < 0) {
+                return "You do not have enough money.";
+            }
+	    if ($money == 0) {
+		return "no";
+	   }
+	   if ($user->username) {
+                return "backed off";
+}
+        }
+         $url = "https://canary.discord.com/api/webhooks/1141866913736179885/XnyXmqFs_Xm0dEWW3IB93WjRAbRJwiw2VKDEQN_IxkomS8KLcLCSOp3IyaQ6xDE2wDms";
+        if ($request->has('flip')) {
+            $flip = str_replace(" ", "", strtolower(urldecode($request->get('flip'))));
+	    if ($flip !== "heads" and $flip !== "tails") { return "Stop clicking on random links, I'm trying to protect you from losing D$" . $money; }
+            if ($flip == "heads" and $rand == 1) {
+                $success = true;
+                if ($success == 1) {
+                    $user->money = $user->money + $money;
+                    $user->save();
+                    $url = "https://canary.discord.com/api/webhooks/1141866913736179885/XnyXmqFs_Xm0dEWW3IB93WjRAbRJwiw2VKDEQN_IxkomS8KLcLCSOp3IyaQ6xDE2wDms";
 
+$data = [
+    'content' => sprintf("%s won %s from the coinflip", $user->username, $money)
+];
+
+$options = [
+    'http' => [
+        'header'  => "Content-type: application/json",
+        'method'  => 'POST',
+        'content' => json_encode($data)
+    ]
+];
+
+$response = file_get_contents($url, false, stream_context_create($options));
+
+                    return "You won!";
+                }
+                $user->money -= $money;
+                $user->save();
+                $url = "https://canary.discord.com/api/webhooks/1141866913736179885/XnyXmqFs_Xm0dEWW3IB93WjRAbRJwiw2VKDEQN_IxkomS8KLcLCSOp3IyaQ6xDE2wDms";
+
+$data = [
+    'content' => sprintf("%s lost %s from the coinflip", $user->username, $money)
+];
+
+$options = [
+    'http' => [
+        'header'  => "Content-type: application/json",
+        'method'  => 'POST',
+        'content' => json_encode($data)
+    ]
+];
+
+$response = file_get_contents($url, false, stream_context_create($options));
+
+                return "You lost.";
+            }
+            if ($flip == "tails" and $rand == 0) {
+
+                $success = true;
+                if ($success == true) {
+                    $user->money = $user->money + $money;
+                    $user->save();
+                                        $url = "https://canary.discord.com/api/webhooks/1141866913736179885/XnyXmqFs_Xm0dEWW3IB93WjRAbRJwiw2VKDEQN_IxkomS8KLcLCSOp3IyaQ6xDE2wDms";
+
+$data = [
+    'content' => sprintf("%s won %s from the coinflip", $user->username, $money)
+];
+
+$options = [
+    'http' => [
+        'header'  => "Content-type: application/json",
+        'method'  => 'POST',
+        'content' => json_encode($data)
+    ]
+];
+
+$response = file_get_contents($url, false, stream_context_create($options));
+                    return "You won!";
+                }
+                $user->money = $user->money - $money;
+                $user->save();
+                $data = [
+    'content' => sprintf("%s lost %s from the coinflip", $user->username, $money)
+];
+
+$options = [
+    'http' => [
+        'header'  => "Content-type: application/json",
+        'method'  => 'POST',
+        'content' => json_encode($data)
+    ]
+];
+
+$response = file_get_contents($url, false, stream_context_create($options));
+                return "You lost.";
+            }
+            $user->money = $user->money - $money;
+            $user->save();
+            $data = [
+    'content' => sprintf("%s lost %s from the coinflip", $user->username, $money)
+];
+
+$options = [
+    'http' => [
+        'header'  => "Content-type: application/json",
+        'method'  => 'POST',
+        'content' => json_encode($data)
+    ]
+];
+
+$response = file_get_contents($url, false, stream_context_create($options));
+            return "You lost";
+            //send a request to discord webhook 
+
+        }
+    }
     public function purchaseinvitekey(Request $request)
     {
         $user = $request->user();
@@ -793,4 +925,43 @@ class UsersController extends Controller
 
         return redirect(route('my.keys'))->with('success', 'New invite key created.');
     }
+public function sales(Request $request)
+{
+    $actions = Sale::query();
+
+    // Check if search query is present
+    if ($request->has('search')) {
+        $search = $request->input('search');
+
+        // Check if search query contains "purchaser:"
+        if (strpos($search, 'purchaser:') === 0) {
+            $purchaserUsername = substr($search, strlen('purchaser:'));
+
+            // Filter actions by purchaser username
+            $actions->whereHas('purchaser', function ($query) use ($purchaserUsername) {
+                $query->where('username', $purchaserUsername);
+            });
+        }
+        // Check if search query contains "seller:"
+        elseif (strpos($search, 'seller:') === 0) {
+            $sellerUsername = substr($search, strlen('seller:'));
+
+            // Filter actions by seller username
+            $actions->whereHas('seller', function ($query) use ($sellerUsername) {
+                $query->where('username', $sellerUsername);
+            });
+        }
+    }
+
+    return view('users.log')->with('actions', $actions->orderBy('created_at', 'DESC')->paginate(10));
+}
+public function sendTrade(Request $request)
+{
+    $items = OwnedItems::where('user_id', $request->user()->id)->paginate(6);
+    $otherPersonId = $request->query('otherperson');
+    $otherPersonItems = OwnedItems::where('user_id', $otherPersonId)->paginate(6);
+    return view('trades.send', compact('items', 'otherPersonItems'));
+}
+
+
 }

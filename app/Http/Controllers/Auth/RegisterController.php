@@ -14,6 +14,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Jobs\RenderJob;
+use ReCaptcha\ReCaptcha;
 
 class RegisterController extends Controller
 {
@@ -53,22 +54,22 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
-    protected function validator(array $data)
-    {
-        $validate = [
-            'username' => ['required', 'string', 'min:3', 'max:20', 'unique:users', 'alpha_num', 'not_regex:/[\xCC\xCD]/'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:4', 'confirmed'],
-            'invite_key' => ['string', new InviteKeyRule()]
-        ];
+protected function validator(array $data)
+{
+    $validate = [
+        'username' => ['required', 'string', 'min:3', 'max:20', 'unique:users', 'alpha_num', 'not_regex:/[\xCC\xCD]/'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => ['required', 'string', 'min:4', 'confirmed'],
+        'invite_key' => ['string', new InviteKeyRule()]
+    ];
 
-        if (config('app.use_captcha'))
-        {
-            $validate['h-captcha-response'] = ['required', 'HCaptcha'];
-        }
-
-        return Validator::make($data, $validate);
+    if (config('app.use_captcha')) {
+        $validate['g-recaptcha-response'] = ['required', 'recaptcha'];
     }
+
+    return Validator::make($data, $validate);
+}
+
 
     /**
      * Create a new user instance after a valid registration.
@@ -76,40 +77,41 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function create(array $data)
-    {
-        if (!config('app.registration_enabled')) {
-            abort(403);
-        }
+protected function create(array $data)
+{
+    if (!config('app.registration_enabled')) {
+        abort(403);
+    }
 
-        if (config('app.invite_keys_required') && !isset($data['invite_key'])) {
-            abort(403);
-        }
+    if (config('app.invite_keys_required') && !isset($data['invite_key'])) {
+        abort(403);
+    }
 
-        if (!ctype_alnum($data['username'])) {
-            abort(403);
-        }
+    if (!ctype_alnum($data['username'])) {
+        abort(403);
+    }
 
-        if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
-            $_SERVER['REMOTE_ADDR'] = $_SERVER["HTTP_CF_CONNECTING_IP"];
-        }
-        $ip = $_SERVER['REMOTE_ADDR'];
-        $associatedUsers = User::where('register_ip', $ip)
-            ->orWhere('last_ip', $ip)
-            ->count();
+    if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
+        $_SERVER['REMOTE_ADDR'] = $_SERVER["HTTP_CF_CONNECTING_IP"];
+    }
+    $ip = $_SERVER['REMOTE_ADDR'];
+    $associatedUsers = User::where('register_ip', $ip)
+        ->orWhere('last_ip', $ip)
+        ->count();
 
-        /*if ($associatedUsers >= config('app.max_accounts_per_ip')) {
-            abort(403);
-        }*/
+    /*if ($associatedUsers >= config('app.max_accounts_per_ip')) {
+        abort(403);
+    }*/
 
-        $user = User::create([
-            'username' => $data['username'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),
-            'register_ip' => '0.0.0.0',
-            'last_ip' => '0.0.0.0',
-            'added_servers' => collect([])
-        ]);
+
+    $user = User::create([
+        'username' => $data['username'],
+        'email' => $data['email'],
+        'password' => Hash::make($data['password']),
+        'register_ip' => '0.0.0.0',
+        'last_ip' => '0.0.0.0',
+        'added_servers' => collect([])
+    ]);	
 
         BodyColors::create([
             'user_id' => $user->id,

@@ -6,9 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
+use App\Models\Item;
 use App\Jobs\RenderJob;
 use App\Http\Cdn\Render;
 use App\Http\Cdn\Thumbnail;
+use Illuminate\Support\Facades\File;
 
 use Log;
 
@@ -49,33 +51,49 @@ class CdnController extends Controller
         return response()->api(Thumbnail::resolve($request->input('type'), $request->input('id'), $threeDee, $admin));
     }
 
-    public function file(Request $request, $file)
+public function file(Request $request, $file)
+{
+    /**
+     * Three operations:
+     * - Is the file name secure? (i.e. sanitize it before passing it to actual file operations)
+     * - Does the file exist?
+     * - Return the file.
+     */
+
+    if (!ctype_alnum($file))
     {
-        /**
-         * Three operations:
-         * - Is the file name secure? (i.e. sanitize it before passing it to actual file operatons)
-         * - Does the file exist?
-         * - Return the file.
-         */
-
-        if (!ctype_alnum($file))
-        {
-            return abort(404);
-        }
-
-        if (!Storage::disk('cdn')->has($file))
-        {
-            return redirect(asset('images/thumbnail/blank.png'));
-        }
-
-        // mime types
-        // really disgusting.
-        // type;length
-        $headers = explode(';', Storage::disk('cdn')->get($file . '.mime'));
-
-        return response(Storage::disk('cdn')->get($file))
-            ->header('Content-Type', 'application/octet-stream')
-            ->header('Content-Encoding', 'gzip')
-            ->header('Access-Control-Allow-Origin', '*');
+        return abort(404);
     }
+    if (!is_numeric($file)) {
+	return abort(403);
+    } 
+    $user = false;
+    if ($request->has("type")) {
+	if ($request->query('type') == "bodyshot") {
+		$user = true;
+		$filePath = storage_path('app/renders/users/' . $file . '.png');
+	}
+	if ($request->query("type") == "headshot") {
+		$user = true;
+		$filePath = storage_path('app/renders/users/headshots/' . $file . '.png');
+	}
+    } else {     $filePath = storage_path('app/renders/items/' . $file . '.png'); }
+    $item = Item::find($file);
+    if ($item && $item->thumbnail_url != NULL) {
+        return redirect($item->thumbnail_url);
+    }
+    if ($item && $user == false && $item->approved == 2) {
+	        return redirect(asset('images/thumbnail/disapproved.png'));
+    }
+    if (!File::exists($filePath)) {
+        return redirect(asset('images/thumbnail/blank.png'));
+    }
+
+    $fileContents = File::get($filePath);
+
+    return response($fileContents)
+        ->header('Content-Type', 'image/png')
+        ->header('Content-Encoding', 'gzip')
+        ->header('Access-Control-Allow-Origin', '*');
+}
 }

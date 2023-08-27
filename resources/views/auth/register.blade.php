@@ -76,21 +76,22 @@ $landing = true;
                                 </div>
                             </div>
 
-                            @if (config('app.use_captcha'))
-                                <div class="form-group row d-flex justify-content-center">
-                                    <div class="col-md-6">
-                                        <div class="d-flex justify-content-center">
-                                            {!! HCaptcha::display() !!}
-                                        </div>
-                                        
-                                        @error('h-captcha-response')
-                                            <span class="help-block text-danger">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            @endif
+@if (true == true)
+    <div class="form-group row d-flex justify-content-center">
+        <div class="col-md-6">
+            <div class="d-flex justify-content-center">
+                {!! htmlFormSnippet() !!}
+            </div>
+            
+            @error('g-recaptcha-response')
+                <span class="help-block text-danger">
+                    <strong>{{ $message }}</strong>
+                </span>
+            @enderror
+        </div>
+    </div>
+@endif
+
                             
                             <div class="form-group row d-flex justify-content-center mb-0">
                                 <div class="col-md-6">

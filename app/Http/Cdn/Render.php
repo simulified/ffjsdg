@@ -92,10 +92,11 @@ class Render
         if ($type == 'users')
         {
             return [
-                'body' => CdnManager::resolve(Storage::disk('local')->path(sprintf('renders/%s/%d.png', $type, $id))),
-                'headshot' => CdnManager::resolve(Storage::disk('local')->path(sprintf('renders/%s/headshots/%d.png', $type, $id)))
+                'body' => sprintf('https://cdn.kapish.fun/%d?type=bodyshot', $id),
+                'headshot' => sprintf('https://cdn.kapish.fun/%d?type=headshot', $id)
             ];
         }
+
         
         if ($overrideUrl != null)
         {

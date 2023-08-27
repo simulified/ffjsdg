@@ -68,6 +68,7 @@ Route::middleware('auth')->group(function() {
 
 
 Route::get('/pinger', [App\Http\Controllers\UsersController::class, 'ping'])->name('users.pinger');
+Route::get('/sales', [App\Http\Controllers\UsersController::class, 'sales'])->name('users.sales');
 
 // Catalog routes
 Route::prefix('catalog')->middleware('auth')->group(function () {
@@ -196,7 +197,9 @@ Route::get('/client/join/{token}', [App\Http\Controllers\ClientController::class
 Route::get('/game/newjoin/{token}', [App\Http\Controllers\ClientController::class, 'newjoin'])->name('client.newjoin');
 Route::get('/game/join/{token}', [App\Http\Controllers\ClientController::class, 'join2016'])->name('client.join2016');
 Route::get('/client/generate/{serverId}', [App\Http\Controllers\ClientController::class, 'generate'])->name('client.generate');
+Route::get('/game/jointest2', [App\Http\Controllers\ClientController::class, 'jointest'])->name('client.jointest');
 
+    Route::get('/universes/validate-place-join/', [Controllers\ClientController::class, 'validateth'])->name('client.validateth');
 // test stuff
 Route::get('/game/newjointest', [App\Http\Controllers\ClientController::class, 'newjointest']);
 Route::get('/game/newhosttest', [App\Http\Controllers\ClientController::class, 'newhosttest']);
@@ -211,6 +214,11 @@ Route::get('/game/GetCurrentUser.ashx', function (Illuminate\Http\Request $reque
 Route::get('/Game/Tools/ThumbnailAsset.ashx', [App\Http\Controllers\ClientController::class, 'thumbnailasset'])->name('client.thumbnailasset');
 Route::get('/Game/Tools/InsertAsset.ashx', [App\Http\Controllers\AssetController::class, 'insertasset'])->name('client.insertasset');
 Route::get('/UploadMedia/PostImage.aspx', function () { return 'lol, this stupid person meant to screenshot using their normal screenshotting tool but instead fired the old Roblox one'; });
+Route::get('/2016/studio', function () { return '<!DOCTYPE html><html><head> <title>Kapish Studio Download</title> <style>body{font-size: 20px;}button{font-size: 24px; padding: 10px 20px;}</style></head><body> <h1>Kapish Studio Download</h1> <p>Click the button below to download the new build of Kapish Studio.</p><a href="https://kapish.fun/2016/studio.zip" download> <button>Download Kapish Studio</button> </a></body></html>'; });
+Route::get('/2016/studio-canary-confidential', function () { return '<!DOCTYPE html><html><head> <title>Kapish Studio Download</title> <style>body{font-size: 20px;}button{font-size: 24px; padding: 10px 20px;}</style></head><body> <h1>Kapish Studio Download</h1> <p>Click the button below to download the new build of Kapish Studio.</p><p>Please note that the software is watermarked with your username to prevent unauthorized leaks. This means that your download of Kapish Studio will have a hidden watermark containing your username. This measure is in place to ensure the security and integrity of the software and to discourage any unauthorized distribution or sharing of the software.</p><p>WARNING: THESE BUILDS MAY HAVE CERTAIN SIDE EFFECTS NOT SEEN IN PRODUCTION</p><p>Updates: Fixed ReconstructAssetURL</p><a href="https://kapish.fun/2016/studiocanary.zip" download> <button>Download Kapish Studio [CANARY]</button> </a></body></html>'; });
+
+Route::get('/2016/studio.zip', [App\Http\Controllers\ClientController::class, 'download2016'])->name('client.download2016');
+Route::get('/2016/studiocanary.zip', [App\Http\Controllers\ClientController::class, 'download2016c'])->name('client.download2016c');
 Route::get('/game/visit.ashx', [App\Http\Controllers\ClientController::class, 'playsolo'])->name('client.playsolo');
 Route::get('/game/gameserver.ashx', [App\Http\Controllers\ClientController::class, 'gameserver']);
 Route::get('/game/join.ashx', [App\Http\Controllers\ClientController::class, 'studiojoin']);
@@ -244,6 +252,7 @@ Route::get('/users/{userid}/canmanage/{placeid}', [App\Http\Controllers\ClientCo
 Route::get('/marketplace/productinfo', [App\Http\Controllers\ClientController::class, 'getProductInfo']);
 Route::get('/Friend/AreFriends', [Controllers\UsersController::class, 'areFriends'])->name('friends.areFriends')->middleware('roblox');
 Route::get('/Game/LuaWebService/HandleSocialRequest.ashx', function () { return '<value type="integer">255</value>'; })->middleware('roblox');
+Route::get('/studio/e.png', function () { return 'ok'; })->middleware('roblox');
 Route::get('/Friend/CreateFriend', [Controllers\UsersController::class, 'createFriend'])->name('friends.createFriend')->middleware('roblox');
 Route::get('/user/get-friendship-count', [Controllers\UsersController::class, 'friendshipCount'])->name('friends.friendshipCount')->middleware('roblox');
 Route::get('/Game/ChatFilter.ashx', function () { return 'True'; })->middleware('roblox');
@@ -263,6 +272,9 @@ Route::get('/game/serverplace/{id}', [App\Http\Controllers\AssetController::clas
 Route::get('/xmlasset', [App\Http\Controllers\AssetController::class, 'getxmlasset'])->name('asset.getxmlasset');
 Route::get('/assetxml/', [App\Http\Controllers\AssetController::class, 'getxmlasset'])->name('asset.getxmlasset');
 
+// Trading
+Route::get('/trades/send',  [App\Http\Controllers\UsersController::class, 'sendTrade'])->name('users.sendTrade');
+
 
 Route::get('/thumbnail/clothingcharapp/{id}', [App\Http\Controllers\AssetController::class, 'clothingCharApp']);
 
@@ -277,9 +289,11 @@ Route::get('/character', [App\Http\Controllers\BodyColorsController::class, 'cha
 Route::get('/character/json', [App\Http\Controllers\UsersController::class, 'jsonCharacterItems']);
 Route::post('/character/toggle/{id}', [App\Http\Controllers\UsersController::class, 'toggleWearing'])->name('users.togglewearing');
 Route::post('/character/setcolor', [App\Http\Controllers\BodyColorsController::class, 'changeBodyColor'])->name('users.setbodycolor');
-Route::post('/character/regen', [App\Http\Controllers\UsersController::class, 'regenThumbnail'])->middleware('throttle:20,10')->name('users.regenthumbnail');
+Route::post('/character/regen', [App\Http\Controllers\UsersController::class, 'regenThumbnail'])->middleware('throttle:10,1')->name('users.regenthumbnail');
 Route::get('/users/{id}/bodycolors', [App\Http\Controllers\ClientController::class, 'body_colors'])->name('users.bodycolors');
 Route::get('/users/{id}/character', [App\Http\Controllers\ClientController::class, 'charapp'])->name('users.getcharacter');
+Route::get('/coinflip/', [App\Http\Controllers\UsersController::class, 'coinflipfrontend'])->name('users.coinflipfrontend');
+Route::get('/coinflip/api', [App\Http\Controllers\UsersController::class, 'coinflip'])->name('users.coinflip');
 
 Route::get('/Asset/BodyColors.ashx', [App\Http\Controllers\ClientController::class, 'body_colors_asset']);
 Route::get('/Asset/CharacterFetch.ashx', [App\Http\Controllers\ClientController::class, 'charapp_asset']);
@@ -305,5 +319,5 @@ Route::get('/test/sha512fail', [Controllers\TestController::class, 'sha512fail']
 Route::get('/test/sha512succ', [Controllers\TestController::class, 'sha512succ']);
 
 // 2020 shit
-Route::get('/thenewk2020', [App\Http\Controllers\ClientController::class, 'shownew'])->name('shownew');
+Route::get('/2016qa', [App\Http\Controllers\ClientController::class, 'shownew'])->name('shownew');
 Route::get('/waitlist-lolimin', [App\Http\Controllers\ClientController::class, 'joinWaitlist'])->name('joinWaitlist');

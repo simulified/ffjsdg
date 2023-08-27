@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-
+use Zip;
 class ClientController extends Controller
 {
     const ADJECTIVES = ["MLG", "Dope", "Mrs.", "Gay", "Mr.", "Squandalous", "Big", "Obtuse", "Dumb", "Large", "Quintavious", "Deaf", "Pondering", "Punished", "Zapped", "Hilarious", "Big", "Frowning", "Fishy", "Premium", "Pristine", "Tubular", "Geeky", "Tweezy", "Condescending", "Repenting", "Quindarious", "Unnerving", "Reverberating", "Squashnabbing", "Guilty", "Nationwide", "Scrumptious", "Absurd", "Atrocious", "Flabbergasted", "Red", "Green", "Yellow", "Blue", "Purple", "Orange", "White", "Black", "Helen"];
@@ -116,6 +116,86 @@ public function client(Request $request, $client)
 
         return Storage::disk('public')->download($path);
     }
+public function download2016(Request $request)
+{
+    $path = 'clients2016/2016studio.zip';
+    // Read the contents of the zip file
+    $zipContents = Storage::disk('public')->get($path);
+
+    // XOR the client's name to the start of the zip file
+
+    // Return the watermarked zip file as a downloadable response
+    $response = response($zipContents, 200, [
+        'Content-Type' => 'application/zip',
+        'Content-Disposition' => 'attachment; filename="kapish-2016-studio.zip"',
+    ]);
+
+    return $response;
+}
+
+public function download2016c(Request $request)
+{
+    $usernames = [
+        'Iaying',
+        'alosh',
+        'joss',
+        'gyro',
+        'Shedletsky',
+        'radiocentric',
+        'MugMan',
+        'm1neep',
+        'dew',
+        'LocalPlayer',
+        'sudoapt',
+        'ROBLOX',
+        'j4x',
+        'idiot',
+        'kz1',
+        'Joel',
+        'Yapz',
+        'zaza',
+        'cowboy',
+        'Xevi',
+        'dew',
+        'carlos',
+        'jttttsound',
+        'simul',
+        'skulyire',
+        'xell',
+        'fun',
+        'para',
+        'ouya',
+        'quato',
+        'AdonisAdminOnTop',
+        'bomber',
+        'Diel',
+        'Facbook',
+        'foid',
+        'row',
+        'punch',
+	'stan'
+    ];
+
+    $path = 'clients2016/2016client-canary.zip';
+    if (!in_array($request->user()->username, $usernames)) {
+        abort(403);
+    }
+
+    // Read the contents of the zip file
+    $zipContents = Storage::disk('public')->get($path);
+
+    // XOR the client's name to the start of the zip file
+    $clientName = str_replace("=", "f", base64_encode($request->user()->username));
+    $watermarkedContents = $zipContents . $clientName;
+
+    // Return the watermarked zip file as a downloadable response
+    $response = response($watermarkedContents, 200, [
+        'Content-Type' => 'application/zip',
+        'Content-Disposition' => 'attachment; filename="kapish-2016-for-' . $request->user()->username . '-watermarked-do-not-leak-UNSTABLE.zip"',
+    ]);
+
+    return $response;
+}
 
     public function generate(Request $request, $uuid)
     {
@@ -329,11 +409,11 @@ public function client(Request $request, $client)
         foreach ($wearingItems as $wearingItem) {
             $item = Item::find($wearingItem->item_id);
 
-            if ($item->approved == 1) {
+            if ($item && $item->approved == 1) {
                 if ($item->isXmlAsset()) {
-                    $appearance[] = 'http://' . request()->getHost() . '/asset?id=' . $item->id;
+                    $appearance[] = 'http://' . request()->getHost() . '/Asset?id=' . $item->id;
                 } else {
-                    $appearance[] = 'http://' . request()->getHost() . '/xmlasset?id=' . $item->id;
+                    $appearance[] = 'http://' . request()->getHost() . '/Asset?id=' . $item->id. "&xmlon=1";
                 }
             }
         }
@@ -457,12 +537,23 @@ public function client(Request $request, $client)
 
         return redirect($url);
     }
+    public function Sign($data = "", $assetId = 0) {
+            global $_STORAGE;
+            $assetId = intval($assetId) ?? 0;
+            $data = "\n" . $data;
 
+            if($assetId != 0) {
+                $data = '\n--rbxassetid%' . $assetId . '%\n' . $data;
+            }
+
+            $signature; // why do i need to pre-initialize the variable bruh ....
+            openssl_sign($data, $signature, file_get_contents(resource_path('keys/PrivateKey.pem')));
+            return "--rbxsig%" . base64_encode($signature) . "%" . $data;
+        }
     public function negotiate(Request $request)
     {
         abort(403);
     }
-
     public function playsolo(Request $request)
     {
         $script = file_get_contents(resource_path('lua/playsolo.lua'));
@@ -485,13 +576,14 @@ public function client(Request $request, $client)
             ]
         );
 
-        $signedscript = ScriptSigner::instance()->sign($script, 'new');
+        $signedscript = $this->Sign($script);
 
         $response = Response::make($signedscript);
         $response->header('Content-Type', 'text/plain');
+
+        $response->header('Content-Encoding', 'en');
         return $response;
     }
-
     public function newplaysolo(Request $request)
     {
         $script = file_get_contents(resource_path('lua/playsolo.lua'));
@@ -511,10 +603,11 @@ public function client(Request $request, $client)
             ]
         );
 
-        $signedscript = ScriptSigner::instance()->sign($script, 'new');
+        $signedscript = Sign($script);
 
         $response = Response::make($signedscript);
         $response->header('Content-Type', 'text/plain');
+        $response->header('Content-Encoding', 'en');
         return $response;
     }
 
@@ -834,8 +927,51 @@ public function client(Request $request, $client)
             return $response;
         }
     }
+public function jointest(Request $request) {
+	        $time = strval(time());
+            $joinscript = [
+                'ClientPort' => 0,
+                'MachineAddress' => "127.0.0.1",
+                'ServerPort' => 64210,
+                'PingUrl' => 'http://api.kapish.fun/ping',
+                'PingInterval' => 120,
+                'UserName' => "stan",
+                'SeleniumTestMode' => false,
+                'UserId' => 1,
+                'SuperSafeChat' => false, 
+                'ClientTicket' => "",
+                'GameId' => Str::uuid()->toString(),
+                'PlaceId' => intval(1),
+                'BaseUrl' => 'http://www.kapish.fun/',
+                'ChatStyle' => "Classic",
+                'VendorId' => 0,
+                'ScreenshotInfo' => '',
+                'VideoInfo' => '',
+                'CreatorId' => 0,
+                'CreatorTypeEnum' => 'User',
+                'MembershipType' => 'None',
+                'AccountAge' => 0,
+                'CookieStoreFirstTimePlayKey' => 'rbx_evt_ftp',
+                'CookieStoreFiveMinutePlayKey' => 'rbx_evt_fmp',
+                'CookieStoreEnabled' => true,
+                'IsRobloxPlace' => true, // $request->trust ?? -- what the hell does this mean
+                'GenerateTeleportJoin' => false,
+                'InUnknownOrUnder13' => false,
+                'SessionId' => Str::uuid()->toString() . '|' . Str::uuid()->toString() . '|0|' . $request->ip ?? 'localhost' . '|0|2022-01-01T24:00:00.0000000Z|0|null|null|0|0|0',
+                'DataCenterId' => 0,
+                'UniverseId' => 0,
+                'BrowserTrackerId' => 0,
+                'UsePortraitMode' => false,
+                'FollowUserId' => 0
+            ];
 
+            $joinscript['CharacterAppearance'] = 'https://kapish.fun/Asset/CharacterFetch.ashx?userId=' . $joinscript['UserId'];
+            $joinscript['characterAppearanceId'] = $joinscript['UserId'];
 
+            $response = Response::make(ScriptSigner::instance()->sign(json_encode($joinscript, JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK), 'new'));
+            $response->header('Content-Type', 'text/plain');
+            return $response;
+    }
     public function newjoin(Request $request, $requestToken) // for 2013 and above
     {
         $token = GameToken::where('token', $requestToken)->first();
@@ -1011,7 +1147,36 @@ public function client(Request $request, $client)
         $response = json_decode($response, true);
         return redirect($response['d']['url']);
     }
+    public function md5(Request $request) {
+    $data = [
+        "data" => [
+            "811ad4c4605da5f3f88ac38728f108e7",
+	    "7b816d946f7b7dd3d9186fc3dc0c5022"
+        ]
+    ];
 
+    return response()->json($data);
+    }
+    public function security(Request $request) {
+    $data = [
+        "data" => [
+            "0.0.0.1",
+	    "PRAFBERQ"
+        ]
+    ];
+
+    return response()->json($data);
+    }
+    public function security2(Request $request) {
+    $data = [
+        "data" => [
+	    "PRAFBERQ",
+            "0.0.0.1"
+        ]
+    ];
+
+    return response()->json($data);
+    }
     public function fastflags(Request $request, $type)
     {
         $version = "2012";
@@ -1021,7 +1186,14 @@ public function client(Request $request, $client)
         }
 
         if ($type == "ClientAppSettings") {
-            $version = "2014";
+            $version = "2016";
+        }
+        if ($type == "ClientSharedSettings") {
+            $version = "ClientShared";
+        }
+
+        if ($type == "RCCService76E5A40C-3AE1-4028-9F10-7C62520BD94F") {
+            $version = "2016";
         }
 
         $flags = Storage::disk('local')->get((sprintf('fastflags/%s.json', $version)));
@@ -1055,9 +1227,14 @@ public function client(Request $request, $client)
 
         $response = Response::make($script);
         $response->header('Content-Type', 'text/plain');
-        return $response;
+        return $response;	
     }
 
+    public function validateth(Request $request) {
+    	        $response = Response::make("true");
+        $response->header('Content-Type', 'text/plain');
+        return $response;
+    }
     public function studiojoin(Request $request)
     {
         $script = file_get_contents(resource_path('lua/studiojoin.lua'));

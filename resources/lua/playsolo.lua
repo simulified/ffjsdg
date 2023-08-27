@@ -16,30 +16,30 @@ function ifSeleniumThenSetCookie(key, value)
     message.Parent = workspace
     message.archivable = false
     
-    game:GetService("ScriptInformationProvider"):SetAssetUrl("http://www.tadah.rocks/Asset/")
+    game:GetService("ScriptInformationProvider"):SetAssetUrl("http://www.kapish.fun/Asset/")
     game:GetService("ContentProvider"):SetThreadPool(16)
-    pcall(function() game:GetService("InsertService"):SetFreeModelUrl("http://www.tadah.rocks/Game/Tools/InsertAsset.ashx?type=fm&q=%s&pg=%d&rs=%d") end) -- Used for free model search (insert tool)
-    pcall(function() game:GetService("InsertService"):SetFreeDecalUrl("http://www.tadah.rocks/Game/Tools/InsertAsset.ashx?type=fd&q=%s&pg=%d&rs=%d") end) -- Used for free decal search (insert tool)
+    pcall(function() game:GetService("InsertService"):SetFreeModelUrl("http://www.kapish.fun/Game/Tools/InsertAsset.ashx?type=fm&q=%s&pg=%d&rs=%d") end) -- Used for free model search (insert tool)
+    pcall(function() game:GetService("InsertService"):SetFreeDecalUrl("http://www.kapish.fun/Game/Tools/InsertAsset.ashx?type=fd&q=%s&pg=%d&rs=%d") end) -- Used for free decal search (insert tool)
     
     ifSeleniumThenSetCookie("SeleniumTest2", "Set URL service")
     
     settings().Diagnostics:LegacyScriptMode()
     
-    game:GetService("InsertService"):SetBaseSetsUrl("http://www.tadah.rocks/Game/Tools/InsertAsset.ashx?nsets=10&type=base")
-    game:GetService("InsertService"):SetUserSetsUrl("http://www.tadah.rocks/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d")
-    game:GetService("InsertService"):SetCollectionUrl("http://www.tadah.rocks/Game/Tools/InsertAsset.ashx?sid=%d")
-    game:GetService("InsertService"):SetAssetUrl("http://www.tadah.rocks/Asset/?id=%d")
-    game:GetService("InsertService"):SetAssetVersionUrl("http://www.tadah.rocks/Asset/?assetversionid=%d")
+    game:GetService("InsertService"):SetBaseSetsUrl("http://www.kapish.fun/Game/Tools/InsertAsset.ashx?nsets=10&type=base")
+    game:GetService("InsertService"):SetUserSetsUrl("http://www.kapish.fun/Game/Tools/InsertAsset.ashx?nsets=20&type=user&userid=%d")
+    game:GetService("InsertService"):SetCollectionUrl("http://www.kapish.fun/Game/Tools/InsertAsset.ashx?sid=%d")
+    game:GetService("InsertService"):SetAssetUrl("http://www.kapish.fun/Asset/?id=%d")
+    game:GetService("InsertService"):SetAssetVersionUrl("http://www.kapish.fun/Asset/?assetversionid=%d")
     
-    pcall(function() game:GetService("SocialService"):SetFriendUrl("http://www.tadah.rocks/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d") end)
-    pcall(function() game:GetService("SocialService"):SetBestFriendUrl("http://www.tadah.rocks/Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%d&userid=%d") end)
-    pcall(function() game:GetService("SocialService"):SetGroupUrl("http://www.tadah.rocks/Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%d&groupid=%d") end)
-    pcall(function() game:GetService("SocialService"):SetGroupRankUrl("http://www.tadah.rocks/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%d&groupid=%d") end)
-    pcall(function() game:GetService("SocialService"):SetGroupRoleUrl("http://www.tadah.rocks/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%d&groupid=%d") end)
-    pcall(function() game:GetService("GamePassService"):SetPlayerHasPassUrl("http://www.tadah.rocks/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d") end)
-    pcall(function() game:GetService("MarketplaceService"):SetProductInfoUrl("https://api.tadah.rocks/marketplace/productinfo?assetId=%d") end)
-    pcall(function() game:GetService("MarketplaceService"):SetDevProductInfoUrl("https://api.tadah.rocks/marketplace/productDetails?productId=%d") end)
-    pcall(function() game:GetService("MarketplaceService"):SetPlayerOwnsAssetUrl("https://api.tadah.rocks/ownership/hasasset?userId=%d&assetId=%d") end)
+    pcall(function() game:GetService("SocialService"):SetFriendUrl("http://www.kapish.fun/Game/LuaWebService/HandleSocialRequest.ashx?method=IsFriendsWith&playerid=%d&userid=%d") end)
+    pcall(function() game:GetService("SocialService"):SetBestFriendUrl("http://www.kapish.fun/Game/LuaWebService/HandleSocialRequest.ashx?method=IsBestFriendsWith&playerid=%d&userid=%d") end)
+    pcall(function() game:GetService("SocialService"):SetGroupUrl("http://www.kapish.fun/Game/LuaWebService/HandleSocialRequest.ashx?method=IsInGroup&playerid=%d&groupid=%d") end)
+    pcall(function() game:GetService("SocialService"):SetGroupRankUrl("http://www.kapish.fun/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRank&playerid=%d&groupid=%d") end)
+    pcall(function() game:GetService("SocialService"):SetGroupRoleUrl("http://www.kapish.fun/Game/LuaWebService/HandleSocialRequest.ashx?method=GetGroupRole&playerid=%d&groupid=%d") end)
+    pcall(function() game:GetService("GamePassService"):SetPlayerHasPassUrl("http://www.kapish.fun/Game/GamePass/GamePassHandler.ashx?Action=HasPass&UserID=%d&PassID=%d") end)
+    pcall(function() game:GetService("MarketplaceService"):SetProductInfoUrl("https://api.kapish.fun/marketplace/productinfo?assetId=%d") end)
+    pcall(function() game:GetService("MarketplaceService"):SetDevProductInfoUrl("https://api.kapish.fun/marketplace/productDetails?productId=%d") end)
+    pcall(function() game:GetService("MarketplaceService"):SetPlayerOwnsAssetUrl("https://api.kapish.fun/ownership/hasasset?userId=%d&assetId=%d") end)
     pcall(function() game:SetCreatorID(0, Enum.CreatorType.User) end)
     
     ifSeleniumThenSetCookie("SeleniumTest3", "Set creator ID")
@@ -64,7 +64,7 @@ function ifSeleniumThenSetCookie(key, value)
     pcall(function() settings()["Task Scheduler"].PriorityMethod = Enum.PriorityMethod.AccumulatedError end)
     
     game:GetService("ChangeHistoryService"):SetEnabled(false)
-    pcall(function() game:GetService("Players"):SetBuildUserPermissionsUrl("http://www.tadah.rocks//Game/BuildActionPermissionCheck.ashx?assetId=0&userId=%d&isSolo=true") end)
+    pcall(function() game:GetService("Players"):SetBuildUserPermissionsUrl("http://www.kapish.fun//Game/BuildActionPermissionCheck.ashx?assetId=0&userId=%d&isSolo=true") end)
     
     workspace:SetPhysicsThrottleEnabled(true)
     
@@ -104,7 +104,7 @@ function ifSeleniumThenSetCookie(key, value)
     else
     player = game:GetService("Players"):CreateLocalPlayer(0)
     end
-    player.CharacterAppearance = "http://www.tadah.rocks/Asset/CharacterFetch.ashx?userId=1&placeId=0"
+    player.CharacterAppearance = "http://www.kapish.fun/Asset/CharacterFetch.ashx?userId=1&placeId=0"
     local propExists, canAutoLoadChar = false
     propExists = pcall(function()  canAutoLoadChar = game.Players.CharacterAutoLoads end)
     
@@ -120,7 +120,7 @@ function ifSeleniumThenSetCookie(key, value)
     
     if not inStudio and false then
     message.Text = "Setting Ping"
-    visit:SetPing("http://www.tadah.rocks/Game/ClientPresence.ashx?version=old&PlaceID=0", 120)
+    visit:SetPing("http://www.kapish.fun/Game/ClientPresence.ashx?version=old&PlaceID=0", 120)
     
     message.Text = "Sending Stats"
     game:HttpGet("")
@@ -154,7 +154,7 @@ function ifSeleniumThenSetCookie(key, value)
     message.Text = "Error on visit: " .. err
     if not inStudio then
     if false then
-    game:HttpPost("http://www.tadah.rocks/Error/Lua.ashx?", "Visit.lua: " .. err)
+    game:HttpPost("http://www.kapish.fun/Error/Lua.ashx?", "Visit.lua: " .. err)
     end
     end
     end

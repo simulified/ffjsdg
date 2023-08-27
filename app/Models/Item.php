@@ -34,7 +34,8 @@ class Item extends Model
         'hatchdate',
         'hatchname',
         'hatchdesc',
-        'thumbnail_url'
+        'thumbnail_url',
+        'detectable' 
     ];
     
     public function user()
