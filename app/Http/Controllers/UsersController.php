@@ -382,9 +382,9 @@ class UsersController extends Controller
     }
     public function friendshipCount(Request $request) {
         $result = array(
-		"success" => true,
-		"count" => 1
-	);
+			"success" => true,
+			"count" => 1
+		);
         return json_encode($result);
     }
 
@@ -635,7 +635,7 @@ class UsersController extends Controller
         $requester = $request->user();
         $receiver = User::findOrFail($targetId);
 
-        if ($requester == $receiver) {
+        if ($requester->id === $receiver->id) {
             abort(400);
         }
 

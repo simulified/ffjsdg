@@ -30,8 +30,8 @@ class HomeController extends Controller
     public function stats(Request $request)
     {
         // cached so we don't murder ourselves
-        $richest = Cache::remember('richest', (60 * 10), fn() => User::where('admin', '0')->orderBy('money', 'desc')->take(15)->get());
-        $poorest = Cache::remember('poorest', (60 * 10), fn() => User::where('admin', '0')->orderBy('money', 'asc')->take(15)->get());
+        $richest = Cache::remember('richest', (60 * 10), fn() => User::where('admin', '0')->orderBy('money', 'asc')->take(15)->get());
+        $poorest = Cache::remember('poorest', (60 * 10), fn() => User::where('admin', '0')->orderBy('money', 'desc')->take(15)->get());
         $userCount = Cache::remember('userCount', (60 * 10), fn() => User::count());
         $itemCount = Cache::remember('itemCount', (60 * 10), fn() => Item::count());
         $serverCount = Cache::remember('serverCount', (60 * 10), fn() => Server::count());

@@ -49,12 +49,6 @@ class AssetController extends Controller
         }
         if (!$item) {
             return redirect('https://assetdelivery.roblox.com/v1/asset?id=' . $request->id);
-
-            /*$response = Http::withUserAgent('Roblox/WinInet')->get('https://assetdelivery.roblox.com/v1/asset?id=' . $request->id);
-            $response = str_replace('www.roblox.com/asset', request()->getHttpHost() . '/asset', $response);
-            $response = Response::make($response, 200);
-            $response->header('Content-Type', 'application/octet-stream');
-            return $response;*/
         }
 
         if ($item->type == "Lua") {

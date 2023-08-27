@@ -668,10 +668,12 @@ class AdminController extends Controller
     function approve(Request $request, $id) {
         $item = Item::find($id);        
         if($item) {
-	    $approved = ($request->submit === 'Approve');
-	    if ($approved == true) { } else {
-		    File::copy(resource_path('png/asset/disapproved.png'), Storage::disk('local')->path(sprintf('renders/items/%d.png', $item->id)));
-	    }
+			$approved = ($request->submit === 'Approve');
+			
+			if (!$approved) {
+				File::copy(resource_path('png/asset/disapproved.png'), Storage::disk('local')->path(sprintf('renders/items/%d.png', $item->id)));
+			}
+			
             $item->update([
                 'approved' => ($approved ? 1 : 2),
             ]);
