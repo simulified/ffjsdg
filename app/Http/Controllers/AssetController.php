@@ -233,7 +233,7 @@ DB::table('ports')->updateOrInsert(
 
     public function clothingCharApp(Request $request, $id)
     {
-        return 'http://' . request()->getHost() . '/xmlasset?id=' . $id;
+        return 'http://' . request()->getHost() . '/Asset?id=' . $id . "&xmlon=1";
     }
 
     public function robloxredirect(Request $request)
