@@ -263,7 +263,6 @@
                 getItems($('#item-card').attr('data-type'));
                 getWornItems();
             })
-            window.tadah.character.liveRegenerate()
         }
 
         function sendColorRequest(color) {
