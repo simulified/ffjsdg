@@ -79,6 +79,10 @@ public function file(Request $request, $file)
 	}
     } else {     $filePath = storage_path('app/renders/items/' . $file . '.png'); }
     $item = Item::find($file);
+    if (File::exists(storage_path("cdn/". $file))) {
+        return redirect(asset('images/thumbnail/blank.png'));
+    }
+
     if ($item && $item->thumbnail_url != NULL) {
         return redirect($item->thumbnail_url);
     }
