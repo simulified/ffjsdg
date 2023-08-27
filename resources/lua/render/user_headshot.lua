@@ -6,16 +6,10 @@ game:GetService("ScriptInformationProvider"):SetAssetUrl(baseUrl .. "/asset/")
 game:GetService("InsertService"):SetAssetUrl(baseUrl .. "/asset/?id=%d")
 game:GetService("InsertService"):SetAssetVersionUrl(baseUrl .. "/Asset/?assetversionid=%d")
 game:GetService("ContentProvider"):SetBaseUrl(baseUrl)
-game:GetService("ScriptContext").ScriptsDisabled = true
 
 local Player = game.Players:CreateLocalPlayer(0)
 Player.CharacterAppearance = ("%s/users/%d/character"):format(baseUrl, assetId)
 Player:LoadCharacter(false)
-
-game:GetService("RunService"):Run()
-
-Player.Character.Animate.Disabled = true 
-Player.Character.Torso.Anchored = true
 
 -- Headshot Camera
 local FOV = 52.5

@@ -6,7 +6,6 @@ game:GetService("ScriptInformationProvider"):SetAssetUrl(baseUrl .. "/asset/")
 game:GetService("InsertService"):SetAssetUrl(baseUrl .. "/asset/?id=%d")
 game:GetService("InsertService"):SetAssetVersionUrl(baseUrl .. "/Asset/?assetversionid=%d")
 game:GetService("ContentProvider"):SetBaseUrl(baseUrl)
-game:GetService("ScriptContext").ScriptsDisabled = true
 
 local meshPart = Instance.new("Part", workspace)
 meshPart.Anchored = true
