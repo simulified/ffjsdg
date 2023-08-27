@@ -76,6 +76,9 @@ public function file(Request $request, $file)
 	}
     } else {     $filePath = storage_path('app/renders/items/' . $file . '.png'); }
     $item = Item::find($file);
+    if ($item == null) {
+        return redirect(asset('images/thumbnail/blank.png'));
+    }
     if (File::exists(storage_path("cdn/". $file))) {
         $headers = explode(';', Storage::disk('cdn')->get($file . '.mime'));
 
